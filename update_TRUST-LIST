@@ -1,0 +1,4 @@
+#!/bin/sh
+EXECSH=/usr/local/sbin/firewall/ipset_TRUST-LIST.sh
+[ ! -e $EXECSH ] && exit
+$EXECSH

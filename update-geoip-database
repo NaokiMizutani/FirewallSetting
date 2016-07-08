@@ -1,0 +1,19 @@
+#!/bin/sh
+DATE=${1:-$(date +"%F")}
+# 木曜日でなければ何もしないで終了します
+[ $(date -d $DATE +"%w") -ne 4 ] && exit
+
+cd /usr/local/share/GeoIP
+# MaxMind社からGeoIP国別データベースをダウンロードします
+wget -nc --timeout=60 --tries=3 http://geolite.maxmind.com/download/geoip/database/GeoIPCountryCSV.zip
+unzip -o GeoIPCountryCSV.zip
+rm -f GeoIPCountryCSV.zip
+
+# 当月のデータベースではない場合はエラー終了します
+if [ $(date -r GeoIPCountryWhois.csv +"%Y%m") -lt $(date -d $DATE +"%Y%m") ] ; then
+  echo "MaxMind社のGeoIPデータベースが更新されていませんでした！" 1>&2
+  exit 1
+fi
+
+# ipset用日本国内IPリストを作成します
+$(dirname $0)/firewall/ipset_JP-LIST.sh

@@ -1,0 +1,9 @@
+# 単一指定のサンプルフォーマット
+# xxx.xxx.xxx.xxx                     # コメント
+
+# 範囲指定のサンプルフォーマット
+# xxx.xxx.xxx.xxx-yyy.yyy.yyy.yyy     # コメント
+
+# CIDR指定のサンプルフォーマット
+# xxx.xxx.xxx.xxx/nn                  # コメント
+  

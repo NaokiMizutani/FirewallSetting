@@ -1,0 +1,32 @@
+# 外部I/Fゾーンのネットワーク情報
+EXTIF="*dev-name*"
+EXTCIDR=$(ip a show dev $EXTIF | grep "inet " | sed -e "s/^ *inet \([0-9\.]\+\/[0-9]\+\).*$/\1/")
+EXTIP=$(echo $EXTCIDR | sed "s/^\([0-9.]\+\)\/.*$/\1/")
+EXTLAN=$(echo $EXTCIDR | sed "s/^\(.\+\)\.[0-9]\+\/24/\1.0\/24/")
+ALLLAN=$(echo $EXTCIDR | sed "s/^\(.\+\)\.[0-9]\+\.[0-9]\+\/24/\1.0.0\/16/")
+
+# パラメータ
+LOGLIMIT="1/s"     # ログマッチ許可    1回/秒
+LOGBURST="3"       # ログマッチ最大値  3回
+
+# IPアドレス用正規表現
+IPREGEX="\([0-9]\{1,3\}\.\)\{3\}[0-9]\{1,3\}"
+
+# firewallコマンドエイリアス関数
+# 再起動しても定義が消えないように--permanent付のコマンドも同時に実行します
+FwCmd() {
+  echo "firewall-cmd $*"
+  eval "firewall-cmd $*"
+  eval "firewall-cmd --permanent $*"
+}
+
+# firewallチェイン追加コマンドエイリアス関数
+FwAddChain() {
+  FwCmd "--direct --add-chain ipv4 filter $*"
+}
+
+# firewallルール追加コマンドエイリアス関数
+FwAddRule() {
+  FwCmd "--direct --add-rule ipv4 filter $*"
+}
+  
